@@ -1,17 +1,39 @@
 #!/usr/bin/env python3
 
 import fileinput
+import sys
 
 lines = fileinput.input()
 
-rows, columns, min_ingredients, max_slices = next(lines).strip().split(' ')
-print('{0} x {1} with [{2}-{3}]'.format(rows, columns, min_ingredients, max_slices))
+rows, columns, min_ingredients, max_slices = \
+    [int(i) for i in next(lines).strip().split(' ')]
+#print('{0} x {1} with [{2}-{3}]'.format(
+#    rows,
+#    columns,
+#    min_ingredients,
+#    max_slices,
+#    file=sys.stderr
+#))
 
-for line in lines:
-    pass
+def valid_slice(slice_):
+    return True
 
-slices = [[0,0,1,1]]
+def get_slices():
+    slices = []
+    for r,line in enumerate(lines):
+        for c,_ in enumerate(line):
+            slice_ = line[c:max_slices]
+            if valid_slice(slice_):
+                slices.append([
+                    r,
+                    c,
+                    r,
+                    c+len(slice_),
+                ])
+                return slices
+    return slices
 
+slices = get_slices()
 
 # Output
 
