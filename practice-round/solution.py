@@ -24,7 +24,8 @@ def valid_slice(slice_):
 def get_slices():
     slices = []
     for r,line in enumerate(lines):
-        for c,_ in enumerate(line):
+        enum_line = enumerate(line)
+        for c,_ in enum_line:
             slice_ = line[c:c+max_cells]
             if valid_slice(slice_):
                 slices.append([
@@ -33,7 +34,10 @@ def get_slices():
                     r,
                     c+len(slice_)-1,
                 ])
-                break
+                if c+len(slice_) >= columns:
+                    break
+                for _ in range(len(slice_)):
+                    next(enum_line)
     return slices
 
 slices = get_slices()
