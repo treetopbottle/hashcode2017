@@ -3,12 +3,13 @@
 import fileinput
 import sys
 
-lines = fileinput.input()
+input_file = fileinput.input()
 
 rows, columns, min_ingredients, max_slices = \
-    [int(i) for i in next(lines).strip().split(' ')]
+    [int(i) for i in next(input_file).strip().split(' ')]
 
 #print('{rows} x {columns} with [{min_ingredients}-{max_slices}]'.format(**locals()))
+lines = list(input_file)
 
 def valid_slice(slice_):
     return True
