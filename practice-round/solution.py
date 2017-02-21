@@ -4,7 +4,8 @@ import fileinput
 
 lines = fileinput.input()
 
-rows, columns, min_ingredients, max_slices = next(lines).split(' ')
+rows, columns, min_ingredients, max_slices = next(lines).strip().split(' ')
+print('{0} x {1} with [{2}-{3}]'.format(rows, columns, min_ingredients, max_slices))
 
 for line in lines:
     pass
