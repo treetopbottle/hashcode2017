@@ -5,10 +5,10 @@ import sys
 
 (header, *lines) = fileinput.input()
 
-rows, columns, min_ingredients, max_slices = \
+rows, columns, min_ingredients, max_cells = \
     [int(i) for i in header.strip().split(' ')]
 
-#print('{rows} x {columns} with [{min_ingredients}-{max_slices}]'.format(**locals()))
+#print('{rows} x {columns} with [{min_ingredients}-{max_cells}]'.format(**locals()))
 
 def valid_slice(slice_):
     mushrooms = 0
@@ -24,7 +24,7 @@ def get_slices():
     slices = []
     for r,line in enumerate(lines):
         for c,_ in enumerate(line):
-            slice_ = line[c:max_slices]
+            slice_ = line[c:c+max_cells]
             if valid_slice(slice_):
                 slices.append([
                     r,
