@@ -3,16 +3,22 @@
 import fileinput
 import sys
 
-input_file = fileinput.input()
+(header, *lines) = fileinput.input()
 
 rows, columns, min_ingredients, max_slices = \
-    [int(i) for i in next(input_file).strip().split(' ')]
+    [int(i) for i in header.strip().split(' ')]
 
 #print('{rows} x {columns} with [{min_ingredients}-{max_slices}]'.format(**locals()))
-lines = list(input_file)
 
 def valid_slice(slice_):
-    return True
+    mushrooms = 0
+    tomatos = 0
+    for ingredient in slice_:
+        if ingredient == 'M':
+            mushrooms += 1
+        elif ingredient == 'T':
+            tomatos += 1
+    return mushrooms >= min_ingredients and tomatos >= min_ingredients
 
 def get_slices():
     slices = []
