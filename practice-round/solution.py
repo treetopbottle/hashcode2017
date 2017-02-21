@@ -30,7 +30,7 @@ def get_slices():
                     r,
                     c,
                     r,
-                    c+len(slice_),
+                    c+len(slice_)-1,
                 ])
                 return slices
     return slices
