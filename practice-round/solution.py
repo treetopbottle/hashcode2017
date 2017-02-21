@@ -4,6 +4,7 @@ import fileinput
 import sys
 
 (header, *lines) = fileinput.input()
+lines = [l.strip() for l in lines]
 
 rows, columns, min_ingredients, max_cells = \
     [int(i) for i in header.strip().split(' ')]
@@ -24,7 +25,7 @@ def get_slices():
     slices = []
     for r,line in enumerate(lines):
         for c,_ in enumerate(line):
-            slice_ = line[c:c+max_cells-1]
+            slice_ = line[c:c+max_cells]
             if valid_slice(slice_):
                 slices.append([
                     r,
