@@ -7,13 +7,8 @@ lines = fileinput.input()
 
 rows, columns, min_ingredients, max_slices = \
     [int(i) for i in next(lines).strip().split(' ')]
-#print('{0} x {1} with [{2}-{3}]'.format(
-#    rows,
-#    columns,
-#    min_ingredients,
-#    max_slices,
-#    file=sys.stderr
-#))
+
+#print('{rows} x {columns} with [{min_ingredients}-{max_slices}]'.format(**locals()))
 
 def valid_slice(slice_):
     return True
@@ -34,6 +29,7 @@ def get_slices():
     return slices
 
 slices = get_slices()
+
 
 # Output
 
