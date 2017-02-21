@@ -24,7 +24,7 @@ def get_slices():
     slices = []
     for r,line in enumerate(lines):
         for c,_ in enumerate(line):
-            slice_ = line[c:c+max_cells]
+            slice_ = line[c:c+max_cells-1]
             if valid_slice(slice_):
                 slices.append([
                     r,
