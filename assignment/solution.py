@@ -2,6 +2,7 @@
 
 import fileinput
 import sys
+import collections
 
 (header, *lines) = fileinput.input()
 lines = [l.strip() for l in lines]
@@ -28,8 +29,19 @@ for i in range(nr_request_descriptions):
     request_descriptions.append((video_id, endpoint_id, nr_requests))
 print(request_descriptions)
 
-# Output
+# Transformation
+cache_to_endpoint = collections.defaultdict(list)
+for endpoint_nr, endpoint in enumerate(endpoints):
+    (latency, connections) = endpoint
+    for connection in connections:
+        (cache_nr, latency_endpoint_to_cache) = connection
+        cache_to_endpoint[cache_nr].append((endpoint_nr,
+                                            latency - latency_endpoint_to_cache))
 
+print(cache_to_endpoint)
+# Output
+def score(video, cache):
+    pass
 
 print('---')
 
