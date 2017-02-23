@@ -17,14 +17,16 @@ for i in range(nr_endpoints):
     latency, nr_connected_cache_servers = [int(i) for i in lines.pop(0).split(' ')]
     connected_cache_servers = []
     for j in range(nr_connected_cache_servers):
-        next_line = lines.pop(0)
-        id_, latency = [int(i) for i in next_line.split(' ')]
+        id_, latency = [int(i) for i in lines.pop(0).split(' ')]
         connected_cache_servers.append((id_, latency))
     endpoints.append((latency, connected_cache_servers))
 print(endpoints[0])
 
+request_descriptions = []
 for i in range(nr_request_descriptions):
-    pass
+    video_id, endpoint_id, nr_requests = [int(i) for i in lines.pop(0).split(' ')]
+    request_descriptions.append((video_id, endpoint_id, nr_requests))
+print(request_descriptions)
 
 # Output
 
