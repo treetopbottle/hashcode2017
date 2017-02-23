@@ -3,6 +3,9 @@
 import fileinput
 import sys
 import collections
+import random
+random.seed(0)
+from bisect import bisect_left
 
 (header, *lines) = fileinput.input()
 lines = [l.strip() for l in lines]
@@ -21,56 +24,53 @@ for i in range(nr_endpoints):
         connected_cache_servers.append((id_, latency))
     endpoints.append((latency, connected_cache_servers))
 
+
+endpoint_request_cutoff = [0]
+
 endpoint_to_request_description = collections.defaultdict(list)
 request_descriptions = []
 for i in range(nr_request_descriptions):
     video_id, endpoint_id, nr_requests = [int(i) for i in lines.pop(0).split(' ')]
     request_descriptions.append((video_id, endpoint_id, nr_requests))
+    endpoint_request_cutoff.append (endpoint_request_cutoff [-1] + nr_requests)
     latency = endpoints[endpoint_id][0]
     endpoint_to_request_description[endpoint_id].append((video_id, nr_requests, latency))
 
-# Transformation
-cache_to_endpoint = collections.defaultdict(list)
-for endpoint_nr, endpoint in enumerate(endpoints):
-    (latency, connections) = endpoint
-    for connection in connections:
-        (cache_nr, latency_endpoint_to_cache) = connection
-        cache_to_endpoint[cache_nr].append((endpoint_nr, latency_endpoint_to_cache))
 
-# Generate Solution
-def score(cache):
-    video_to_score = collections.defaultdict(int)
-    for endpoint_nr, endpoint_latency in cache_to_endpoint[cache]:
-        for video_id, nr_requests, current_latency in endpoint_to_request_description[endpoint_nr]:
-            video_to_score[video_id] += nr_requests \
-                                        * max(0, current_latency - endpoint_latency)
-    return video_to_score
 
-def cache_to_candidates(cache_id):
-    cache0 = score(cache_id)
-    top_videos = sorted(cache0.keys(), key=lambda v: -cache0[v] / videos_mb[v])
-    return top_videos
+cache_server_descriptions = collections.defaultdict (list)
+cache_server_used = collections.defaultdict (int)
+    
+def update_cache_for_video (cache_id, video):
+    if video in cache_server_descriptions [cache_id]:
+        cache_server_descriptions[cache_id].remove (video)
+        cache_server_descriptions[cache_id] = [video] + cache_server_descriptions [cache_id]
+    else:
+        cache_server_descriptions[cache_id] = [video] + cache_server_descriptions [cache_id]
+        cache_server_used [cache_id] += videos_mb [video]
+        while (cache_server_used [cache_id] > capacity):
+            old_video = cache_server_descriptions [cache_id].pop ()
+            cache_server_used [cache_id] -= videos_mb [video]
+           
+                                  
+def best_cache_for (endpoint_id):
+    if (len (endpoints [endpoint_id][1]) == 0):
+        return -1
+    else:
+        return min (endpoints [endpoint_id][1], key = lambda v: v[1]) [0]
+    
+def simulate (request):
+    cache_id = best_cache_for (request [1])
+    if (cache_id >= 0):
+        update_cache_for_video (cache_id, request [0])
 
-def videos_for_cache(cache_id):
-    candidates = cache_to_candidates(cache_id)
-    remaining_size = capacity
-    for candidate in candidates:
-        if videos_mb[candidate] <= remaining_size:
-            remaining_size -= videos_mb[candidate]
-            yield candidate
 
-def update_request_description(cache_nr, videos):
-    for endpoint,latency_for_cache in cache_to_endpoint[cache_nr]:
-        for i,description in enumerate(endpoint_to_request_description[endpoint]):
-            (video_id, nr_requests, current_latency) = description
-            if video_id in videos:
-                endpoint_to_request_description[endpoint][i] = (video_id, nr_requests, min(current_latency, latency_for_cache))
+for i in range (100000):
+    random_req = random.random () * (endpoint_request_cutoff [-1])
+    random_index = bisect_left (endpoint_request_cutoff, random_req)
+    simulate (request_descriptions [random_index - 1])
 
-cache_server_descriptions = {}
-for cache_nr in range(nr_cache_servers):
-    videos_to_place_in_cache = list(videos_for_cache(cache_nr))
-    cache_server_descriptions[cache_nr] = videos_to_place_in_cache
-    update_request_description(cache_nr, cache_server_descriptions[cache_nr])
+    
 
 print(len(cache_server_descriptions))
 for i in cache_server_descriptions:
