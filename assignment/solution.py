@@ -47,14 +47,20 @@ def score(cache):
             video_to_score[video_id] += nr_requests * latency_improvements
     return video_to_score
 
-cache0 = score(0)
-top_videos = sorted(cache0.keys(), key=lambda v: -cache0[v] / videos_mb[v])
-#print(top_videos)
-#print([videos_mb[v] for v in top_videos])
+def cache_to_candidates(cache_id):
+    cache0 = score(cache_id)
+    top_videos = sorted(cache0.keys(), key=lambda v: -cache0[v] / videos_mb[v])
+    return top_videos
 
-# Output
+def videos_for_cache(cache_id):
+    candidates = cache_to_candidates(cache_id)
+    remaining_size = capacity
+    for candidate in candidates:
+        if videos_mb[candidate] <= remaining_size:
+            remaining_size -= videos_mb[candidate]
+            yield candidate
+
 print(len(cache_server_descriptions))
-
 for i in cache_server_descriptions:
     output = [i] + cache_server_descriptions[i]
     print(' '.join([str(o) for o in output]))
