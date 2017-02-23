@@ -38,7 +38,6 @@ for endpoint_nr, endpoint in enumerate(endpoints):
                                             latency - latency_endpoint_to_cache))
 
 # Generate Solution
-cache_server_descriptions = {0 : [0, 1]}
 
 def score(cache):
     video_to_score = collections.defaultdict(int)
@@ -59,6 +58,9 @@ def videos_for_cache(cache_id):
         if videos_mb[candidate] <= remaining_size:
             remaining_size -= videos_mb[candidate]
             yield candidate
+
+cache_server_descriptions = {}
+cache_server_descriptions[0] = list(videos_for_cache(0))
 
 print(len(cache_server_descriptions))
 for i in cache_server_descriptions:
