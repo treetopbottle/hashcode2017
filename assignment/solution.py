@@ -58,9 +58,32 @@ def videos_for_cache(cache_id):
             remaining_size -= videos_mb[candidate]
             yield candidate
 
-cache_server_descriptions = {}
-for cache_nr in range(nr_cache_servers):
-    cache_server_descriptions[cache_nr] = list(videos_for_cache(cache_nr))
+scores_per_cache_per_video = {}
+for cache in range(nr_cache_servers):
+    scores_per_cache_per_video[cache] = score(cache)
+
+cache_server_descriptions = collections.defaultdict(list)
+cache_size_used = collections.defaultdict(int)
+for video in range(nr_videos):
+    video_size = videos_mb[video]
+    best_cache_score = 0
+    best_cache = -1
+    pick_best_cache = []
+    for cache in range(nr_cache_servers):
+        cache_score = scores_per_cache_per_video[cache][video]
+        pick_best_cache.append((cache_score, cache))
+        if cache_score > best_cache_score \
+            and cache_size_used[cache] + video_size <= capacity:
+            best_cache_score = cache_score
+            best_cache = cache
+    #if best_cache >= 0:
+    #    cache_server_descriptions[cache].append(video)
+    #    cache_size_used[best_cache] += video_size
+    for score, cache in reversed(sorted(pick_best_cache)):
+        if cache_size_used[cache] + video_size <= capacity:
+            cache_server_descriptions[cache].append(video)
+            cache_size_used[cache] += video_size
+            break
 
 print(len(cache_server_descriptions))
 for i in cache_server_descriptions:
