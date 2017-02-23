@@ -47,7 +47,10 @@ def score(cache):
             video_to_score[video_id] += nr_requests * latency_improvements
     return video_to_score
 
-
+cache0 = score(0)
+top_videos = sorted(cache0.keys(), key=lambda v: -cache0[v] / videos_mb[v])
+#print(top_videos)
+#print([videos_mb[v] for v in top_videos])
 
 # Output
 print(len(cache_server_descriptions))
