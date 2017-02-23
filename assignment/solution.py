@@ -23,10 +23,12 @@ for i in range(nr_endpoints):
     endpoints.append((latency, connected_cache_servers))
 print(endpoints[0])
 
+endpoint_to_request_description = collections.defaultdict(list)
 request_descriptions = []
 for i in range(nr_request_descriptions):
     video_id, endpoint_id, nr_requests = [int(i) for i in lines.pop(0).split(' ')]
     request_descriptions.append((video_id, endpoint_id, nr_requests))
+    endpoint_to_request_description[endpoint_id].append((video_id, nr_requests))
 print(request_descriptions)
 
 # Transformation
@@ -40,8 +42,12 @@ for endpoint_nr, endpoint in enumerate(endpoints):
 
 print(cache_to_endpoint)
 # Output
-def score(video, cache):
-    pass
+def score(cache):
+    video_to_score = collections.defaultdict(int)
+    for endpoint_nr, latency_improvements in cache_to_endpoint[cache]:
+        for video_id, nr_requests in endpoint_to_request_description[endpoint_nr]:
+            video_to_score[video_id] += nr_requests * latency_improvements
+    return video_to_score
 
-print('---')
+print(score(0))
 
