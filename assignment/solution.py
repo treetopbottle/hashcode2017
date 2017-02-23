@@ -50,7 +50,7 @@ def update_cache_for_video (cache_id, video):
         cache_server_used [cache_id] += videos_mb [video]
         while (cache_server_used [cache_id] > capacity):
             old_video = cache_server_descriptions [cache_id].pop ()
-            cache_server_used [cache_id] -= videos_mb [video]
+            cache_server_used [cache_id] -= videos_mb [old_video]
            
                                   
 def best_cache_for (endpoint_id):
@@ -65,7 +65,7 @@ def simulate (request):
         update_cache_for_video (cache_id, request [0])
 
 
-for i in range (100000):
+for i in range (500000):
     random_req = random.random () * (endpoint_request_cutoff [-1])
     random_index = bisect_left (endpoint_request_cutoff, random_req)
     simulate (request_descriptions [random_index - 1])
