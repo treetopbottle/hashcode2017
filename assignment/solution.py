@@ -4,7 +4,7 @@ import fileinput
 import sys
 import collections
 import random
-random.seed(0)
+# random.seed(0)
 from bisect import bisect_left
 
 (header, *lines) = fileinput.input()
@@ -54,6 +54,7 @@ def update_cache_for_video (cache_id, video):
            
                                   
 def best_cache_for (endpoint_id):
+    random.shuffle (endpoints [endpoint_id][1])
     if (len (endpoints [endpoint_id][1]) == 0):
         return -1
     else:
